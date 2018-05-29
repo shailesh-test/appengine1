@@ -15,21 +15,82 @@
 # [START app]
 import logging
 
+# [START all]
+import cgi
+import textwrap
+import urllib
+
 # [START imports]
 from flask import Flask, render_template, request
+from google.appengine.ext import ndb
 # [END imports]
 
 # [START create_app]
 app = Flask(__name__)
 # [END create_app]
 
+# [START Stock]
+class Stock(ndb.Model):
+    """Models an individual Stock entry with Stock quote and other required attributes"""
+    #quote = ndb.StringProperty()
+    name = ndb.StringProperty()
+    industrytype = ndb.StringProperty()
+    companytype = ndb.StringProperty()
+# [END Stock]
 
-# [START form]
-@app.route('/form')
-def form():
-    return render_template('form.html')
+
+# [START Stock]
+class StockPrice(ndb.Model):
+    """Models an individual Stock Price entry with Stock quote and other price details"""
+    quote = ndb.StringProperty()
+    estimated_price = ndb.FloatProperty()
+    percentage_diff = ndb.FloatProperty()
+    last_updated = ndb.DateTimeProperty(auto_now_add=True)
+# [END Stock]
+
+
+# [START main]
+@app.route('/main')
+def addStock():
+    return render_template('addstock.html')
 # [END form]
 
+@app.route('/stock')
+def stock_get():
+    quote = request.args.get('quote')
+    stock = Stock.get_by_id(quote)
+    if(not(stock is None)):
+        return render_template(
+            'stockdetails.html',
+        quote = stock.key.id(),
+        name = stock.name,
+        industrytype = stock.industrytype,
+        companytype = stock.companytype)
+    else:
+        return "<h1>Invalid Stock Quote specified</h1>"
+
+# [START stock_post]
+@app.route('/stock', methods=['POST'])
+def stock_post():
+    quote = request.form['quote']
+    name = request.form['name']
+    industrytype = request.form['industrytype']
+    companytype = request.form['companytype']
+
+    # Add stock in database
+    stock_key = Stock(id = quote, name = name, industrytype = industrytype, companytype = companytype).put()
+    # [END sustock_postbmitted]
+    
+    # [START render_template]
+    return render_template(
+        'stockdetails.html',
+    quote = quote,
+    name = name,
+    industrytype = industrytype,
+    companytype = companytype,
+    message = "Thaks for adding Stock " + quote)
+    
+    # [END render_template]
 
 # [START submitted]
 @app.route('/submitted', methods=['POST'])

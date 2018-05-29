@@ -1,0 +1,36 @@
+<html>
+  <head>
+    <title>Test App Engine</title>
+   <!-- <link rel="stylesheet" type="text/css" href="/static/style.css"> -->
+  </head>
+  <body>
+    <div id="container">
+      <div class="pagetitle">
+        <h1>Add stock details to follow the price</h1>
+      </div>
+      <div id="main">
+        <form method="post" action="{{ url_for('stock_post') }}">
+            <table>
+                <tr>
+                  <td><label for="name">Company Name:</label></td>
+                  <td><input type="text" name="name"><br /></td>
+                </tr>
+                <tr>
+                    <td><label for="quote">Stock Quote:</label></td>
+                    <td><input type="text" name="quote"></td>
+                </tr>
+                <tr>
+                  <td><label for="name">Industry Type:</label></td>
+                  <td><input type="text" name="industrytype"><br /></td>
+                </tr>
+                <tr>
+                  <td><label for="name">Company Type:</label></td>
+                  <td><input type="text" name="companytype"><br /></td>
+                </tr>
+                </table>
+          <input type="submit">
+        </form>
+      </div>
+    </div>
+  </body>
+</html>
