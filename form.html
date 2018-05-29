@@ -1,0 +1,36 @@
+<html>
+  <head>
+    <title>Example of CourseBuilder Customization</title>
+   <!-- <link rel="stylesheet" type="text/css" href="/static/style.css"> -->
+  </head>
+  <body>
+    <div id="container">
+      <div class="pagetitle">
+        <h1>Register yourself to Persistent Systems's internal system for enrolling on the course</h1>
+      </div>
+      <div id="main">
+        <form method="post" action="{{ url_for('submitted_form') }}">
+            <table>
+                <tr>
+                  <td><label for="name">Name:</label></td>
+                  <td><input type="text" name="Full name"><br /></td>
+                </tr>
+                <tr>
+                    <td><label for="email">Email address:</label></td>
+                    <td><input type="email" name="email"></td>
+                </tr>
+                <tr>
+                    <td><label for="site_url">Website URL:</label></td>
+                    <td><input type="url" name="site_url"></td>
+                </tr>
+                <tr>
+                    <td><label for="comments">Comments:</label></td>
+                    <td><textarea name="comments"></textarea></td>
+                </tr>
+                </table>
+          <input type="submit">
+        </form>
+      </div>
+    </div>
+  </body>
+</html>
