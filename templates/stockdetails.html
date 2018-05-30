@@ -10,11 +10,61 @@
      </div>
      <div id="main">
        <p>Stock Details</p>
+
        <p>
-          <strong>Name</strong>: {{name}} <br>
-          <strong>Quote</strong>: {{quote}} <br>
-          <strong>Type of Company</strong>: {{companytype}} <br>
-          <strong>Type of Industry</strong>: {{industrytype}} <br>
+         <!-- != null and quote != "" -->
+         {% if stockList %}
+            <!-- Print details of all stocks -->
+            <p>
+              <table>
+                {% for stock in stockList %}
+                  <tr>
+                  {% for i in stock %}
+                    <td>{{ i }}</td>
+                  {% endfor %}
+                </tr>
+                {% endfor %}
+              </table>
+            </p> 
+         {% else %}
+            {% if quote %}
+                <strong>Name</strong>: {{name}} <br>
+                <strong>Quote</strong>: {{quote}} <br>
+                <strong>Type of Company</strong>: {{companytype}} <br>
+                <strong>Type of Industry</strong>: {{industrytype}} <br>
+              {% else %}
+                <p>No details available for given Stock Quote</p>
+              {% endif %}
+          {% endif %}
+        </p>
+        
+        <p>
+          <div id="StockList" />
+
+          <!--
+          <script>
+            function drawTable() {
+              var divStockList = document.getElementById('StockList');
+              var tbl = document.createElement("table");
+              var totalRows = 5
+              var cellsInRow = 3
+
+              for (var r = 0; r < totalRows; r++) {
+                var row = document.createElement("tr");
+                for (var c = 0; c < cellsInRow; c++) {
+                  var cell = document.createElement("td");
+                  var cellText = document.createTextNode("abc");
+                  cell.appendChild(cellText);
+                  row.appendChild(cell);
+                }
+
+                tbl.appendChild(row); // add the row to the end of the table body
+              }
+              divStockList.appendChild(tbl); // appends <table> into <div1>
+            }
+            window.onload=drawTable; 
+          </script>
+          -->
        </p>
      </div>
    </div>

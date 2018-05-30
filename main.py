@@ -32,7 +32,7 @@ app = Flask(__name__)
 # [START Stock]
 class Stock(ndb.Model):
     """Models an individual Stock entry with Stock quote and other required attributes"""
-    #quote = ndb.StringProperty()
+    #quote = ndb.StringProperty() // Primary Key of Stock
     name = ndb.StringProperty()
     industrytype = ndb.StringProperty()
     companytype = ndb.StringProperty()
@@ -55,19 +55,34 @@ def addStock():
     return render_template('addstock.html')
 # [END form]
 
+def callback(stock):
+    attributeList = []
+    #key = ndb.Key('Stock', stock.id)
+    #print key
+    #stockInstance = key.get()
+    attributeList.extend([stock.key.id(), stock.name, stock.industrytype, stock.companytype])
+    return attributeList
+
+@app.route('/stocks')
+def stocksall_get():
+    allStocks = Stock.query().fetch()
+    #stockList = list( map(callback, allStocks) )
+    stockList = map(callback, allStocks)
+    return render_template('stockdetails.html',stockList = stockList)
+
 @app.route('/stock')
 def stock_get():
     quote = request.args.get('quote')
     stock = Stock.get_by_id(quote)
     if(not(stock is None)):
         return render_template(
-            'stockdetails.html',
+        'stockdetails.html',
         quote = stock.key.id(),
         name = stock.name,
         industrytype = stock.industrytype,
         companytype = stock.companytype)
     else:
-        return "<h1>Invalid Stock Quote specified</h1>"
+        return render_template('stockdetails.html',quote = "")
 
 # [START stock_post]
 @app.route('/stock', methods=['POST'])
@@ -78,7 +93,7 @@ def stock_post():
     companytype = request.form['companytype']
 
     # Add stock in database
-    stock_key = Stock(id = quote, name = name, industrytype = industrytype, companytype = companytype).put()
+    Stock(id = quote, name = name, industrytype = industrytype, companytype = companytype).put()
     # [END sustock_postbmitted]
     
     # [START render_template]
@@ -88,7 +103,7 @@ def stock_post():
     name = name,
     industrytype = industrytype,
     companytype = companytype,
-    message = "Thaks for adding Stock " + quote)
+    message = "Thanks for adding Stock " + quote)
     
     # [END render_template]
 
