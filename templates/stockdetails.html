@@ -9,12 +9,11 @@
        <h1>{{message}}</h1>
      </div>
      <div id="main">
-       <p>Stock Details</p>
-
        <p>
          <!-- != null and quote != "" -->
          {% if stockList %}
             <!-- Print details of all stocks -->
+            <p>Details of all Stocks</p>
             <p>
               <table>
                 {% for stock in stockList %}
@@ -27,6 +26,7 @@
               </table>
             </p> 
          {% else %}
+         <p>Details of an individual Stock</p>
             {% if quote %}
                 <strong>Name</strong>: {{name}} <br>
                 <strong>Quote</strong>: {{quote}} <br>

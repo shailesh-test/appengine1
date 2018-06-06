@@ -21,8 +21,11 @@ import textwrap
 import urllib
 
 # [START imports]
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, redirect
 from google.appengine.ext import ndb
+from google.appengine.ext import vendor
+
+vendor.add('lib')
 # [END imports]
 
 # [START create_app]
@@ -48,25 +51,24 @@ class StockPrice(ndb.Model):
     last_updated = ndb.DateTimeProperty(auto_now_add=True)
 # [END Stock]
 
-
 # [START main]
 @app.route('/main')
 def addStock():
     return render_template('addstock.html')
 # [END form]
 
-def callback(stock):
-    attributeList = []
-    #key = ndb.Key('Stock', stock.id)
-    #print key
-    #stockInstance = key.get()
-    attributeList.extend([stock.key.id(), stock.name, stock.industrytype, stock.companytype])
-    return attributeList
+@app.route('/stocklist')
+def stockslist_get():
+    logging.info('Retrieving details of all stocks')
+    allStocks = Stock.query().fetch()
+    stockList = map(callback, allStocks)
+    #vendor.requests.get(url = "https://cbproj1.appspot.com/stocks")
+    return redirect("https://cbproj1.appspot.com/stocks")
 
 @app.route('/stocks')
 def stocksall_get():
+    logging.info('Retrieving details of all stocks')
     allStocks = Stock.query().fetch()
-    #stockList = list( map(callback, allStocks) )
     stockList = map(callback, allStocks)
     return render_template('stockdetails.html',stockList = stockList)
 
@@ -132,3 +134,9 @@ def server_error(e):
     logging.exception('An error occurred during a request.')
     return 'An internal error occurred.', 500
 # [END app]
+
+def callback(stock):
+    attributeList = []
+    attributeList.extend([stock.key.id(), stock.name, stock.industrytype, stock.companytype])
+    return attributeList
+
