@@ -18,12 +18,14 @@ import logging
 # [START all]
 import cgi
 import textwrap
+import json
 import urllib
 
 # [START imports]
 from flask import Flask, render_template, request, redirect
 from google.appengine.ext import ndb
 from google.appengine.ext import vendor
+from google.appengine.api import urlfetch
 
 vendor.add('lib')
 # [END imports]
@@ -65,9 +67,35 @@ def stockslist_get():
     #vendor.requests.get(url = "https://cbproj1.appspot.com/stocks")
     return redirect("https://cbproj1.appspot.com/stocks")
 
+@app.route('/stockprice')
+def stockprice_get():
+    logging.info('Retrieving prices details of stocks')
+    quote = request.args.get('quote')
+    url = 'https://www.alphavantage.co/query?function=BATCH_STOCK_QUOTES&symbols=MSFT,GOOG,FB,AAPL&apikey=25JS3G0B74BGOF88'
+    response_op = 'Price result not found'
+    try:
+        result = urlfetch.fetch(url)
+        if result.status_code == 200:
+			logging.info('URL fetch successful')
+			#response_op = result.content
+			result = json.loads(result.content.decode('utf-8'))
+			response_op = json.dumps(result, indent=4, sort_keys=True)
+        else:
+			logging.error('URL fetch failed : ' + result.msg)
+			logging.error('Status code: ' + result.status_code)
+    except urlfetch.Error:
+        logging.exception('Caught exception fetching url')
+    return response_op
+
+
 @app.route('/stocks')
 def stocksall_get():
     logging.info('Retrieving details of all stocks')
+    TContext = "NNNN/NNNN;xxxxx"
+    if 'X-Cloud-Trace-Context' in request.headers:
+        TContext = request.headers.get('X-Cloud-Trace-Context')
+    logging.info('TContext : ' + TContext)
+    
     allStocks = Stock.query().fetch()
     stockList = map(callback, allStocks)
     return render_template('stockdetails.html',stockList = stockList)
